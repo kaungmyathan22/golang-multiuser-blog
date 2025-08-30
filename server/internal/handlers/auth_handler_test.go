@@ -1,4 +1,3 @@
-package handlers
 package handlers_test
 
 import (
@@ -11,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kaungmyathan22/golang-multiuser-blog/internal/handlers"
 	"github.com/kaungmyathan22/golang-multiuser-blog/internal/models"
-	"github.com/kaungmyathan22/golang-multiuser-blog/internal/service"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )

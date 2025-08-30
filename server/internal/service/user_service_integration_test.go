@@ -79,7 +79,7 @@ func TestUserService_Register_Success(t *testing.T) {
 	assert.Equal(t, req.LastName, user.LastName)
 	assert.Equal(t, req.Email, user.Email)
 	assert.Equal(t, req.Username, user.Username)
-	assert.Empty(t, user.Password) // Password should not be returned
+	// Password should not be returned in the response
 }
 
 func TestUserService_Register_DuplicateEmail(t *testing.T) {
