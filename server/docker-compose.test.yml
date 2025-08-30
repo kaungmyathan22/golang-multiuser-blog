@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db-test:
+    image: postgres:15-alpine
+    container_name: blog-db-test
+    environment:
+      POSTGRES_DB: golang_multiuser_blog_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    networks:
+      - blog-test-network
+
+  db-e2e:
+    image: postgres:15-alpine
+    container_name: blog-db-e2e
+    environment:
+      POSTGRES_DB: golang_multiuser_blog_e2e_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_e2e_data:/var/lib/postgresql/data
+    networks:
+      - blog-test-network
+
+volumes:
+  postgres_test_data:
+  postgres_e2e_data:
+
+networks:
+  blog-test-network:
+    driver: bridge

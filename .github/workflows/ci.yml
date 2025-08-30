@@ -1,0 +1,99 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: golang_multiuser_blog_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Get dependencies
+      run: |
+        cd server
+        go mod download
+
+    - name: Run unit tests
+      run: |
+        cd server
+        go test -v ./internal/... -short
+      env:
+        DB_HOST: localhost
+        DB_PORT: 5432
+        DB_USER: postgres
+        DB_PASSWORD: postgres
+        DB_NAME: golang_multiuser_blog_test
+        DB_SSLMODE: disable
+        JWT_SECRET: test-secret-key
+        GIN_MODE: test
+
+    - name: Run integration tests
+      run: |
+        cd server
+        go test -v ./internal/... -run Integration
+      env:
+        DB_HOST: localhost
+        DB_PORT: 5432
+        DB_USER: postgres
+        DB_PASSWORD: postgres
+        DB_NAME: golang_multiuser_blog_test
+        DB_SSLMODE: disable
+        JWT_SECRET: test-secret-key
+        GIN_MODE: test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Build
+      run: |
+        cd server
+        go build -o blog-server cmd/server/main.go
+
+    - name: Docker build
+      run: |
+        cd server
+        docker build -t blog-server .
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - name: Deploy message
+      run: echo "Deployment would happen here"
