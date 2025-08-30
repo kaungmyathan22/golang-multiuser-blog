@@ -1,54 +1,63 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"os"
+	"time"
+
+	"github.com/kaungmyathan22/golang-multiuser-blog/internal/config"
+	"github.com/kaungmyathan22/golang-multiuser-blog/internal/migration"
+	"github.com/kaungmyathan22/golang-multiuser-blog/internal/router"
 )
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	// Load configuration
+	log.Println("🔧 Loading configuration...")
+	cfg := config.LoadConfig()
+
+	// Initialize database
+	log.Println("🗄️  Initializing database...")
+	config.InitDatabase(cfg)
+
+	// Run database migrations
+	log.Println("📊 Running database migrations...")
+	if err := migration.RunMigrations(); err != nil {
+		log.Fatal("Failed to run migrations:", err)
 	}
 
-	// Root endpoint
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, `{"message": "Golang Multi-User Blog API", "status": "running", "version": "1.0.0"}`)
-	})
+	// Initialize router
+	log.Println("🌐 Setting up routes...")
+	r := router.NewRouter(cfg)
+	appRouter := r.SetupRoutes()
 
-	// Health check endpoint
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, `{"status": "healthy"}`)
-	})
+	// Configure server
+	server := &http.Server{
+		Addr:         ":" + cfg.Port,
+		Handler:      appRouter,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
 
-	// API routes placeholder
-	http.HandleFunc("/api/users", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, `{"message": "Users API endpoint", "method": "%s"}`, r.Method)
-	})
+	// Print startup information
+	log.Printf("🚀 Golang Multi-User Blog Server starting on port %s", cfg.Port)
+	log.Printf("📱 Environment: %s", cfg.App.Environment)
+	log.Printf("📄 Health Check: http://localhost:%s/health", cfg.Port)
+	log.Printf("🔗 API Base URL: http://localhost:%s/api", cfg.Port)
+	log.Printf("👤 Auth Endpoints:")
+	log.Printf("   📝 Register: POST http://localhost:%s/api/auth/register", cfg.Port)
+	log.Printf("   🔑 Login: POST http://localhost:%s/api/auth/login", cfg.Port)
+	log.Printf("   👥 Profile: GET http://localhost:%s/api/auth/profile", cfg.Port)
+	log.Printf("📝 Blog Endpoints:")
+	log.Printf("   📚 Posts: GET http://localhost:%s/api/posts", cfg.Port)
+	log.Printf("   📄 Published: GET http://localhost:%s/api/posts/published", cfg.Port)
+	log.Printf("   🔍 Search: GET http://localhost:%s/api/posts/search?q=query", cfg.Port)
+	log.Printf("💾 Database: PostgreSQL on %s:%d", cfg.Database.Host, cfg.Database.Port)
+	log.Println("")
+	log.Println("🎉 Server is ready to accept connections!")
 
-	http.HandleFunc("/api/posts", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, `{"message": "Posts API endpoint", "method": "%s"}`, r.Method)
-	})
-
-	http.HandleFunc("/api/auth", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, `{"message": "Authentication API endpoint", "method": "%s"}`, r.Method)
-	})
-
-	log.Printf("🚀 Golang Multi-User Blog Server starting on port %s", port)
-	log.Printf("📁 API Documentation: http://localhost:%s/", port)
-	log.Printf("💚 Health Check: http://localhost:%s/health", port)
-	log.Printf("👥 Users API: http://localhost:%s/api/users", port)
-	log.Printf("📝 Posts API: http://localhost:%s/api/posts", port)
-	log.Printf("🔐 Auth API: http://localhost:%s/api/auth", port)
-
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
-		log.Fatal("Server failed to start:", err)
+	// Start server
+	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		log.Fatal("❌ Server failed to start:", err)
 	}
 }

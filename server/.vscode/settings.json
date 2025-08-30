@@ -1,0 +1,11 @@
+{
+    "evenBetterToml.schema.associations": {
+        ".air.toml": "off",
+        ".air.*.toml": "off"
+    },
+    "evenBetterToml.schema.enabled": false,
+    "files.associations": {
+        ".air.toml": "toml",
+        ".air.*.toml": "toml"
+    }
+}
