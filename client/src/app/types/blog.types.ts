@@ -42,22 +42,24 @@ export interface Post {
   published_at: string | null;
 }
 
-// Create post request type
+// Create post request type - updated to match backend requirements
 export interface CreatePostRequest {
   title: string;
   content: string;
   excerpt: string;
   featured_image?: string;
   tag_ids?: number[];
+  status: 'draft' | 'published' | 'archived'; // Add required status field
 }
 
-// Update post request type
+// Update post request type - updated to match backend requirements
 export interface UpdatePostRequest {
   title?: string;
   content?: string;
   excerpt?: string;
   featured_image?: string;
   tag_ids?: number[];
+  status?: 'draft' | 'published' | 'archived'; // Add optional status field
   is_published?: boolean;
 }
 

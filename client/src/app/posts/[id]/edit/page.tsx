@@ -44,7 +44,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
         // Convert tag IDs to comma-separated string
         if (postData.tags && postData.tags.length > 0) {
-          const tagIds = postData.tags.map((tag: any) => tag.id).join(', ');
+          const tagIds = postData.tags.map((tag: { id: number }) => tag.id).join(', ');
           setTags(tagIds);
         }
       } else {
@@ -72,13 +72,16 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         .map(tag => parseInt(tag))
         .filter(tag => !isNaN(tag));
 
+      // Determine status based on isPublished flag
+      const status: 'published' | 'draft' | 'archived' = isPublished ? 'published' : 'draft';
+
       const postData = {
         title,
         content,
         excerpt: excerpt || undefined,
         featured_image: featuredImage || undefined,
         tag_ids: tagIds.length > 0 ? tagIds : undefined,
-        is_published: isPublished,
+        status,
       };
 
       const response = await BlogService.updatePost(parseInt(params.id), postData);
@@ -138,7 +141,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900">Post not found</h1>
-            <p className="mt-2 text-gray-600">The post you're trying to edit doesn't exist.</p>
+            <p className="mt-2 text-gray-600">The post you&#39;re trying to edit doesn&#39;t exist.</p>
             <button
               onClick={() => router.push('/posts')}
               className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -161,7 +164,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900">Unauthorized</h1>
-            <p className="mt-2 text-gray-600">You don't have permission to edit this post.</p>
+            <p className="mt-2 text-gray-600">You don&#39;t have permission to edit this post.</p>
             <button
               onClick={() => router.push(`/posts/${params.id}`)}
               className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

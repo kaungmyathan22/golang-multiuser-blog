@@ -28,6 +28,12 @@ export default function DashboardPage() {
                 <Link href="/dashboard" className="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                   Dashboard
                 </Link>
+                <Link href="/posts" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                  Posts
+                </Link>
+                <Link href="/posts/create" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                  Create Post
+                </Link>
                 <Link href="/profile" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                   Profile
                 </Link>
@@ -69,18 +75,18 @@ export default function DashboardPage() {
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Welcome to your Dashboard</h2>
                 <p className="text-gray-600 mb-6">This is your personalized dashboard where you can manage your blog posts and settings.</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-white p-6 rounded-lg shadow">
+                  <Link href="/posts" className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
                     <h3 className="text-lg font-medium text-gray-900">Your Posts</h3>
                     <p className="mt-2 text-gray-600">Manage your blog posts</p>
-                  </div>
-                  <div className="bg-white p-6 rounded-lg shadow">
-                    <h3 className="text-lg font-medium text-gray-900">Comments</h3>
-                    <p className="mt-2 text-gray-600">View and manage comments</p>
-                  </div>
-                  <div className="bg-white p-6 rounded-lg shadow">
+                  </Link>
+                  <Link href="/posts/create" className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
+                    <h3 className="text-lg font-medium text-gray-900">Create New Post</h3>
+                    <p className="mt-2 text-gray-600">Write a new blog post</p>
+                  </Link>
+                  <Link href="/profile" className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow">
                     <h3 className="text-lg font-medium text-gray-900">Settings</h3>
                     <p className="mt-2 text-gray-600">Update your profile and preferences</p>
-                  </div>
+                  </Link>
                 </div>
               </div>
             </div>

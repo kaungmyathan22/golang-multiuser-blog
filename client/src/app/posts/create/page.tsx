@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import ProtectedRoute from '../../components/ProtectedRoute';
 import { useAuth } from '../../contexts/auth.context';
+import { CreatePostRequest } from '../../types/blog.types';
 import { BlogService } from '../../utils/blog.service';
 
 export default function CreatePostPage() {
@@ -34,13 +35,16 @@ export default function CreatePostPage() {
         .map(tag => parseInt(tag))
         .filter(tag => !isNaN(tag));
 
-      const postData = {
+      // Determine status based on isPublished flag
+      const status: 'published' | 'draft' | 'archived' = isPublished ? 'published' : 'draft';
+
+      const postData: CreatePostRequest = {
         title,
         content,
         excerpt,
         featured_image: featuredImage || undefined,
         tag_ids: tagIds.length > 0 ? tagIds : undefined,
-        is_published: isPublished,
+        status,
       };
 
       const response = await BlogService.createPost(postData);
