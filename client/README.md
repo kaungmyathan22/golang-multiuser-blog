@@ -20,6 +20,35 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Authentication Setup
+
+This application uses JWT-based authentication with the following features:
+
+### Environment Variables
+Create a `.env` file based on `.env.example`:
+```bash
+cp .env.example .env
+```
+
+### Authentication Flow
+1. Users can register at `/register`
+2. Users can login at `/login`
+3. Protected routes (like `/dashboard` and `/profile`) require authentication
+4. The auth context manages user state and tokens
+
+### API Integration
+The frontend communicates with the Go backend API at `http://localhost:8080` by default.
+
+## Project Structure
+- `app/contexts/auth.context.tsx` - Authentication context provider
+- `app/utils/auth.service.ts` - Authentication service for API calls
+- `app/types/auth.types.ts` - TypeScript types for authentication
+- `app/components/ProtectedRoute.tsx` - Component to protect authenticated routes
+- `app/login/page.tsx` - Login page
+- `app/register/page.tsx` - Registration page
+- `app/dashboard/page.tsx` - User dashboard
+- `app/profile/page.tsx` - User profile page
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
