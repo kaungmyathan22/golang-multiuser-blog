@@ -42,7 +42,7 @@ export default function RegisterPage() {
         // Registration successful, redirect to login
         router.push('/login');
       } else {
-        setError(response.error || 'Registration failed');
+        setError(response.error?.toString() || 'Registration failed');
       }
     } catch (err) {
       setError('An unexpected error occurred');

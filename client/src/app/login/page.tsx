@@ -28,7 +28,7 @@ export default function LoginPage() {
       if (response.success) {
         router.push('/dashboard');
       } else {
-        setError(response.error || 'Login failed');
+        setError(response.error?.toString() || 'Login failed');
       }
     } catch (err) {
       setError('An unexpected error occurred');
@@ -89,7 +89,7 @@ export default function LoginPage() {
           <div className="flex items-center justify-between">
             <div className="text-sm">
               <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-                Don't have an account? Register
+                Don&apos;t have an account? Register
               </Link>
             </div>
           </div>
